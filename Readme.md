@@ -13,5 +13,5 @@ Lets you choose how you want your rehearsal marks. Choices are:
 - Numbers (1, 2, 3, ...)
 - Following measure numbers
 
-# Sample result:
+## Sample result:
 ![alt text](https://github.com/Marr11317/RehearsalMarksMusescorePlugins/raw/master/BarlinesForRehearsalMarker.png "Example image")
