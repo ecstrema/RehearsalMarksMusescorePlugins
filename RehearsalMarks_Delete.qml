@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.1
 
 MuseScore {
       menuPath: "Plugins.RehearsalMarks.Delete"
-      description: "This plugin adds rehearsal marks at double barlines and begin repeat barlines."
+      description: "This plugin removes rehearsal marks."
       version: "1.0"
       requiresScore: true
       onRun: {
@@ -20,7 +20,7 @@ MuseScore {
             } else if (curScore.selection.elements[0].type != Element.REHEARSAL_MARK){
                   selectionError.open();
                   Qt.quit();
-            }else {
+            } else {
                   curScore.startCmd();
                   cmd("select-similar");
                   cmd("delete");
@@ -47,4 +47,9 @@ MuseScore {
                   Qt.quit()
             }
       }
+      // Settings {
+            // id : settings
+            // category : "plugin.rehearsalMarks.settings"
+      // }
+      
 }

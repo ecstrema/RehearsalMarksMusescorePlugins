@@ -1,11 +1,12 @@
 import QtQuick 2.0
 import MuseScore 3.0
 import QtQuick.Dialogs 1.1
+import Qt.labs.settings 1.0
 
 MuseScore {
       menuPath: "Plugins.RehearsalMarks.AddAtBarlines"
       description: "This plugin adds rehearsal marks at double barlines and begin repeat barlines."
-      version: "1.0"
+      version: "1.1"
       requiresScore: true
       onRun: {
             if (!curScore)
@@ -31,8 +32,7 @@ MuseScore {
                   
                   
                   var mark = newElement(Element.REHEARSAL_MARK);
-                  mark.text = "A"
-                  mark.visible = true
+                  mark.text = settings.value ("sequenceType", "A");
                   if (elements.length > 0) {  // We have a selection list to work with...
                         console.log(elements.length, "selections")
                         for (var idx = 0; idx < elements.length; idx++) {
@@ -44,8 +44,12 @@ MuseScore {
                                           cursor.rewind(0);
                                           do {
                                                 if (cursor.tick == tick) {
+                                                      var meaNo = findMeasureNumber(cursor.measure) + 1
+                                                      if (mark.text == "mea")
+                                                            mark.text = meaNo;
                                                       console.log("We found the tick!");
-                                                      cursor.add(mark.clone());
+                                                      if (meaNo > 1)
+                                                            cursor.add(mark.clone());
                                                       break;
                                                 }
                                           } while (cursor.next())
@@ -59,6 +63,30 @@ MuseScore {
                   Qt.quit();
             }
       }
+      
+      function findMeasureNumber (mea) {
+            if (!mea) {
+                  console.log("findMeasureNumber: no measure");
+                  return 0;
+            }
+            
+            var ms = mea
+            var i = 1;
+            while (ms.prev) {
+                  ms = ms.prev;
+                  if (ms.is (curScore.firstMeasure))
+                        return i;
+                  // todo: don't count measure if excluded from measure count
+                  console.log(i)
+                  i++;
+            }
+            if (i > 1){
+                  console.log("findMeasureNumber: measure not found");
+                  return 0;
+            }
+            return 1; // it was measure number 1
+      }
+            
       MessageDialog {
             id: versionError
             visible: false
@@ -76,5 +104,9 @@ MuseScore {
             onAccepted: {
                   Qt.quit()
             }
+      }
+      Settings {
+            id : settings
+            category : "plugins.rehearsalMarks"
       }
 }
